@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <!-- obj because it can be intended to delete any object. It is going to be generic delete functionality -->
+    <p>Are you sure you want to delete "{{obj}}"</p> 
+    <!-- request.META.HTTP_REFERER is the url where the request was sent -->
+    <a href="{{request.META.HTTP_REFERER}}">Go Back</a>
+    <input type="submit" value="Confirm">
+</form>
+
+{% endblock content %}
