@@ -1,10 +1,35 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: codebuddy
+      MYSQL_USER: codebuddy_user
+      MYSQL_PASSWORD: codebuddy_password
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_AUTH_PLUGIN: mysql_native_password # Add this line to enable native password authentication
+    networks:
+      - mynetwork
+
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
-      - 80:8000
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+volumes:
+  db_data:
+
+networks:
+  mynetwork:
