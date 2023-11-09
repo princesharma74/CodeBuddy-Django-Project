@@ -8,6 +8,13 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-dev \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config
+
 # Install dependencies
 COPY requirements.txt /code/
 RUN pip install --upgrade pip
