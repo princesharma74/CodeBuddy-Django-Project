@@ -12,6 +12,7 @@ def getRoutes(request):
         # for rooms
         'GET /api/rooms',
         'GET /api/rooms/:id'
+
     ]
     return Response(routes)
 
@@ -77,26 +78,48 @@ def updateSubmissions(request, pk):
     data = request.data
     user = User.objects.get(username=pk)
     retdata = []
-    for submission in data:
+    for sub in data:
         try:
-            problem = Problem.objects.get(url=submission['problem_link'])
+            problem = Problem.objects.get(url=sub['problem_link'])
         except ObjectDoesNotExist:
             problem = Problem.objects.create(
-                title=submission['problem_title'],
-                url=submission['problem_link'],
-                platform=submission['platform'],
+                title=sub['problem_title'],
+                url=sub['problem_link'],
+                platform=sub['platform'],
             )
         try: 
-            submission = Submission.objects.get(submission_id=submission['submission_id'])
+            submission = Submission.objects.get(submission_id=sub['submission_id'])
         except ObjectDoesNotExist:
             submission = Submission.objects.create(
-                submission_id=submission['submission_id'],
+                submission_id=sub['submission_id'],
                 problem=problem,
-                submission_link=submission['submission_url'],
+                submission_link=sub['submission_url'],
                 submitted_by=user,
             )
+        retdata.append(submission)
     return Response(retdata)
         
+
+@api_view(['POST'])
+def createSubmission(request, pk):
+    data = request.data
+    user = User.objects.get(username=pk)
+    try:
+        problem = Problem.objects.get(url=data['problem_link'])
+    except ObjectDoesNotExist:
+        problem = Problem.objects.create(
+            title=data['problem_title'],
+            url=data['problem_link'],
+            platform=data['platform'],
+        )
+    submission = Submission.objects.create(
+        submission_id=data['submission_id'],
+        problem=problem,
+        submission_link=data['submission_url'],
+        submitted_by=user,
+    )
+    serializer = SubmissionSerializer(submission, many=False)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getUser(request, pk):
