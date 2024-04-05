@@ -118,6 +118,9 @@ def updateSubmissions(request, pk):
         user = User.objects.get(username=pk)
         retdata = []
         for sub in data:
+            # check if platform, problem_title, problem_link, submission_id, submission_url, exists and is not empty
+            if 'platform' not in sub or 'problem_title' not in sub or 'problem_link' not in sub or 'submission_id' not in sub or 'submission_url' not in sub:
+                return Response({'error': 'Invalid submission data'}, status = status.HTTP_400_BAD_REQUEST)
             try:
                 problem = Problem.objects.get(url=sub['problem_link'])
             except ObjectDoesNotExist:
@@ -136,7 +139,8 @@ def updateSubmissions(request, pk):
                     submitted_by=user,
                 )
             retdata.append(submission)
-        return Response(retdata, status = status.HTTP_200_OK)
+        serializer = SubmissionSerializer(retdata, many=True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
     except ObjectDoesNotExist:
         return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
         
