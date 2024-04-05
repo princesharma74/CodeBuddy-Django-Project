@@ -43,7 +43,7 @@ def getRoom(request, pk):
         serializer = RoomSerializer(room, many=False)
         return Response(serializer.data, status = status.HTTP_200_OK)
     except ObjectDoesNotExist:
-        return Response({'error': 'Room does not exist.. Dude!'}, status = status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Room does not exist'}, status = status.HTTP_404_NOT_FOUND)
 
 # ---------------------------------------------------
 
@@ -57,12 +57,12 @@ def getUsers(request):
 
 @api_view(['GET'])
 def getUser(request, pk):
-    # check if the user exists
-    if not User.objects.filter(username=pk).exists():
-        return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
-    user = User.objects.get(username=pk)
-    serializer = UserSerializer(user, many=False)
-    return Response(serializer.data, status = status.HTTP_200_OK)
+    try:
+        user = User.objects.get(username=pk)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 # update user
 @api_view(['PATCH'])
