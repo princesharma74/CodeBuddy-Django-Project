@@ -88,7 +88,7 @@ class User(AbstractBaseUser):
         return f"https://www.codechef.com/users/{self.codechef_id}"
 
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        return self.username
 
 class Problem(models.Model):
     url = models.URLField(primary_key=True)
