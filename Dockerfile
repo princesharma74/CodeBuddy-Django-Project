@@ -12,6 +12,7 @@ WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN apt-get update
 RUN apt-get -y install pkg-config python3-dev default-libmysqlclient-dev build-essential
 
 # Copy project
