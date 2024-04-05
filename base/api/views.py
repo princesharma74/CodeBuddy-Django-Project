@@ -62,8 +62,9 @@ def getUser(request, pk):
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data, status = status.HTTP_200_OK)
     except ObjectDoesNotExist:
-        return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User does not exists.. Dude!'}, status = status.HTTP_404_NOT_FOUND)
 
+# update user
 @api_view(['PATCH'])
 def updateUser(request, pk):
     try: 
