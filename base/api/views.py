@@ -58,9 +58,13 @@ def getUsers(request):
 
 @api_view(['GET'])
 def getUser(request, pk):
-    user = get_object_or_404(User, username=pk)
-    serializer = UserSerializer(user, many=False)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try: 
+        user = User.objects.get(username=pk)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+    except ObjectDoesNotExist:
+        return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
+
 
 # update user
 @api_view(['PATCH'])
@@ -168,13 +172,6 @@ def createSubmission(request, pk):
     serializer = SubmissionSerializer(submission, many=False)
     return Response(serializer.data)
 
-@api_view(['GET'])
-def getUser(request, pk):
-    user = User.objects.get(username=pk)
-    serializer = UserSerializer(user, many=False)
-    return Response(serializer.data)
-
-# ---------------------------------------------------
 
 # for problems
 # ---------------------------------------------------
