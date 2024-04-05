@@ -12,6 +12,7 @@ urlpatterns = [
     path('user/<str:pk>', views.getUser),
     path('user/<str:pk>/update', views.updateUser),
     path('user/<str:pk>/updatesubmissions', views.updateSubmissions),
+    path('user/<str:pk>/submissions', views.getSubmissions),
 
     # for problems
     path('problems/', views.getProblems),

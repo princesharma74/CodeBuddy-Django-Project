@@ -20,7 +20,7 @@ class UserManager(BaseUserManager):
             last_name=last_name,
             email = self.normalize_email(email),
         )
-
+        user.is_superuser = True
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -33,11 +33,18 @@ class UserManager(BaseUserManager):
             email,
             password=password,
         )
-        user.is_admin = True
+        user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
 class User(AbstractBaseUser): 
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
     username = models.CharField(max_length=255, primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -56,10 +63,6 @@ class User(AbstractBaseUser):
     created_at = models.DateTimeField(default=timezone.now, null=True)
     last_edited_at = models.DateTimeField(auto_now=True)
 
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-
-    objects = UserManager()
 
     avatar = models.ImageField(null=True, default="avatar.svg")
 
@@ -87,10 +90,6 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-    @property
-    def is_staff(self):
-        return self.is_admin
-
 class Problem(models.Model):
     url = models.URLField(primary_key=True)
     title = models.CharField(max_length=255)
@@ -99,10 +98,10 @@ class Problem(models.Model):
     last_edited_at = models.DateTimeField(auto_now=True)
 
 class Submission(models.Model):
-    submission_id = models.CharField(max_length=255, primary_key=True, default='0')
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions')
+    submission_id = models.CharField(max_length=255, primary_key=True)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions', default='0')
     submission_link = models.URLField()
-    submitted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+    submitted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions', null=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 
@@ -129,6 +128,12 @@ class Room(models.Model):
     def __str__(self): 
         return self.name # the only difference from auto_now is that it gets its value only once the first time when the table was created
 
+class DevToken(models.Model):
+    token = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.token
 class Message(models.Model): 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE) # in place of cascade, you could do SET_NULL to avoid deleting messages when Room is deleted. Cascade means it gets deleted when it is deleted.
