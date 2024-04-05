@@ -104,6 +104,9 @@ def updateUser(request, pk):
 # ---------------------------------------------------
 @api_view(['GET'])
 def getSubmissions(request, pk):
+    # check if the user exists
+    if not User.objects.filter(username=pk).exists():
+        return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
     try: 
         submissions = Submission.objects.filter(submitted_by=pk)
         serializer = SubmissionSerializer(submissions, many=True)
