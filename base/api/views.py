@@ -1,5 +1,6 @@
 # JSON - Javascript Object Notation
 from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from base.models import Room, User, Problem, Topic, Submission
@@ -57,12 +58,9 @@ def getUsers(request):
 
 @api_view(['GET'])
 def getUser(request, pk):
-    try:
-        user = User.objects.get(username=pk)
-        serializer = UserSerializer(user, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except ObjectDoesNotExist:
-        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    user = get_object_or_404(User, username=pk)
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # update user
 @api_view(['PATCH'])
