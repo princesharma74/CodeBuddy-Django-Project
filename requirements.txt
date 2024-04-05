@@ -4,4 +4,4 @@ django-cors-headers
 Pillow
 django-tailwind
 django-environ
-mysqlclient
+pymysql
