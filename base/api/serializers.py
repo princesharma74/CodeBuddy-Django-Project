@@ -1,5 +1,5 @@
 # classes that take a python object to convert into json object
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField, Serializer
 from base.models import Room, User, Problem, Topic, Submission
 
 class RoomSerializer(ModelSerializer): 
@@ -7,10 +7,22 @@ class RoomSerializer(ModelSerializer):
         model = Room
         fields = '__all__'
 
-class UserSerializer(ModelSerializer): 
-    class Meta: 
+from django.contrib.auth.hashers import make_password
+
+class UserSerializer(ModelSerializer):
+    password = CharField(write_only=True)  # Add this line
+
+    class Meta:
         model = User
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
+
+class UserLoginSerializer(Serializer):
+    username = CharField(max_length=255)
+    password = CharField(max_length=128)
 
 class ProblemSerializer(ModelSerializer):
     class Meta:
