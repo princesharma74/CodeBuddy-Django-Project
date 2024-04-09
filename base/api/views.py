@@ -4,8 +4,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from base.models import Room, User, Problem, Topic, Submission
+from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
-from .serializers import RoomSerializer, UserSerializer, ProblemSerializer, TopicSerializer, SubmissionSerializer
+from .serializers import RoomSerializer, UserSerializer, ProblemSerializer, TopicSerializer, SubmissionSerializer, UserLoginSerializer
 
 @api_view(['GET'])
 def getRoutes(request): 
@@ -66,7 +67,6 @@ def getUser(request, pk):
         return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
 
 
-# update user
 @api_view(['PATCH'])
 def updateUser(request, pk):
     try: 
@@ -102,6 +102,68 @@ def updateUser(request, pk):
         return Response(serializer.data, status = status.HTTP_200_OK)
     except ObjectDoesNotExist:
         return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
+
+'''
+@api_view(['POST'])
+def checkUserExists(request):
+    data = request.data
+    if 'username' not in data:
+        return Response({'error': 'Invalid user data'}, status = status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=data['username']).exists():
+        return Response({'message': 'User exists'}, status = status.HTTP_200_OK)
+    return Response({'message': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
+'''
+
+
+@api_view(['POST'])
+def createUser(request, pk):
+    # check if the user already exists
+    if User.objects.filter(username=pk).exists():
+        return Response({'message': 'User already exists'}, status = status.HTTP_200_OK)
+    data = request.data
+    # check if username, email, first_name, last_name exists and is not empty
+    if 'email' not in data or 'first_name' not in data or 'last_name' not in data:
+        return Response({'error': 'Invalid user data'}, status = status.HTTP_400_BAD_REQUEST)
+    try: 
+        user = User.objects.create(
+            username=pk,
+            email=data['email'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+        )
+        if 'bio' in data:
+            user.bio = data['bio']
+        if 'codechef_id' in data:
+            user.codechef_id = data['codechef_id']
+        if 'leetcode_id' in data:
+            user.leetcode_id = data['leetcode_id']
+        if 'codeforces_id' in data:
+            user.codeforces_id = data['codeforces_id']
+        if 'codechef_rating' in data:
+            user.codechef_rating = data['codechef_rating']
+        if 'leetcode_rating' in data:
+            user.leetcode_rating = data['leetcode_rating']
+        if 'codeforces_rating' in data:
+            user.codeforces_rating = data['codeforces_rating']
+        
+        user.save()
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status = status.HTTP_201_CREATED)
+    except:
+        return Response({'error': 'Something went wrong.'}, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def checkUserAuthentication(request):
+    serializer = UserLoginSerializer(data=request.data)
+    if serializer.is_valid():
+        username = serializer.validated_data.get('username')
+        password = serializer.validated_data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            return Response({'message': 'User is authenticated'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # for submissions
 # ---------------------------------------------------

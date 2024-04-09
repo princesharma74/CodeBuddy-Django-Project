@@ -11,6 +11,9 @@ urlpatterns = [
     path('users/', views.getUsers),
     path('user/<str:pk>', views.getUser),
     path('user/<str:pk>/update', views.updateUser),
+    path('user/create/<str:pk>', views.createUser),
+    path('authenticate', views.checkUserAuthentication),
+
     path('user/<str:pk>/updatesubmissions', views.updateSubmissions),
     path('user/<str:pk>/submissions', views.getSubmissions),
 
