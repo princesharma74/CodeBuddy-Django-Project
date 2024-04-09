@@ -1,25 +1,25 @@
 from django.urls import path
-from . import views
+from . import views, users, rooms, submissions, problems, topics
+
 
 urlpatterns = [
     path('', views.getRoutes),
     # for rooms
-    path('rooms/', views.getRooms),
-    path('room/<str:pk>', views.getRoom),
+    path('rooms/', rooms.getRooms),
+    path('room/<str:pk>', rooms.getRoom),
     
     # for users
-    path('users/', views.getUsers),
-    path('user/<str:pk>', views.getUser),
-    path('user/<str:pk>/update', views.updateUser),
-    path('user/create/<str:pk>', views.createUser),
-    path('authenticate', views.checkUserAuthentication),
+    path('users/', users.getUsers),
+    path('user/<str:pk>', users.getUser),
+    path('user/<str:pk>/update', users.updateUser),
+    path('user/create/<str:pk>', users.createUser),
 
-    path('user/<str:pk>/updatesubmissions', views.updateSubmissions),
-    path('user/<str:pk>/submissions', views.getSubmissions),
+    path('user/<str:pk>/updatesubmissions', submissions.updateSubmissions),
+    path('user/<str:pk>/submissions', submissions.getSubmissions),
 
     # for problems
-    path('problems/', views.getProblems),
+    path('problems/', problems.getProblems),
 
     # for topics
-    path('topics/', views.getTopics),
+    path('topics/', topics.getTopics),
 ]
