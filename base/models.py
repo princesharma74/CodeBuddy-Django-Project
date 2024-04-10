@@ -1,8 +1,9 @@
+from typing import Any
+from django.http import HttpRequest
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-# Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, username, first_name, last_name, email, password=None):
         if not username:
@@ -56,9 +57,18 @@ class User(AbstractBaseUser):
     leetcode_id = models.CharField(max_length=255, null=True)
     codeforces_id = models.CharField(max_length=255, null=True)
 
-    codechef_rating = models.IntegerField(null=True, default=0)
-    leetcode_rating = models.IntegerField(null=True, default=0)
-    codeforces_rating = models.IntegerField(null=True, default=0)
+    codechef_rating = models.IntegerField(null=True)
+    leetcode_rating = models.IntegerField(null=True)
+    codeforces_rating = models.IntegerField(null=True)
+    global_rank_codeforces = models.IntegerField(null=True)
+    global_rank_leetcode = models.IntegerField(null=True)
+    global_rank_codechef = models.IntegerField(null=True)
+    number_of_codeforces_contests = models.IntegerField(null=True)
+    number_of_leetcode_contests = models.IntegerField(null=True)
+    number_of_codechef_contests = models.IntegerField(null=True)
+    number_of_codeforces_questions = models.IntegerField(null=True)
+    number_of_leetcode_questions = models.IntegerField(null=True)
+    number_of_codechef_questions = models.IntegerField(null=True)
 
     created_at = models.DateTimeField(default=timezone.now, null=True)
     last_edited_at = models.DateTimeField(auto_now=True)
@@ -98,6 +108,7 @@ class Problem(models.Model):
     url = models.URLField(primary_key=True)
     title = models.CharField(max_length=255)
     platform = models.CharField(max_length=10, choices=[('Codechef', 'Codechef'), ('Leetcode', 'Leetcode'), ('Codeforces', 'Codeforces')])
+    submitted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='problems')
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 

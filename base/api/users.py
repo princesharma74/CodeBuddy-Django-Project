@@ -49,6 +49,24 @@ def updateUser(request, pk):
             user.leetcode_rating = data['leetcode_rating']
         if 'codeforces_rating' in data:
             user.codeforces_rating = data['codeforces_rating']
+        if 'number_of_codeforces_contests' in data:
+            user.number_of_codeforces_contests = data['number_of_codeforces_contests']
+        if 'number_of_leetcode_contests' in data:
+            user.number_of_leetcode_contests = data['number_of_leetcode_contests']
+        if 'number_of_codechef_contests' in data:
+            user.number_of_codechef_contests = data['number_of_codechef_contests']
+        if 'number_of_codeforces_questions' in data:
+            user.number_of_codeforces_questions = data['number_of_codeforces_questions']
+        if 'number_of_leetcode_questions' in data:
+            user.number_of_leetcode_questions = data['number_of_leetcode_questions']
+        if 'number_of_codechef_questions' in data:
+            user.number_of_codechef_questions = data['number_of_codechef_questions']
+        if 'global_rank_codeforces' in data:
+            user.global_rank_codeforces = data['global_rank_codeforces']
+        if 'global_rank_leetcode' in data:
+            user.global_rank_leetcode = data['global_rank_leetcode']
+        if 'global_rank_codechef' in data:
+            user.global_rank_codechef = data['global_rank_codechef']
         if 'avatar' in data:
             user.avatar = data['avatar']
 
@@ -100,6 +118,24 @@ def createUser(request, pk):
             user.leetcode_rating = data['leetcode_rating']
         if 'codeforces_rating' in data:
             user.codeforces_rating = data['codeforces_rating']
+        if 'number_of_codeforces_contests' in data:
+            user.number_of_codeforces_contests = data['number_of_codeforces_contests']
+        if 'number_of_leetcode_contests' in data:
+            user.number_of_leetcode_contests = data['number_of_leetcode_contests']
+        if 'number_of_codechef_contests' in data:
+            user.number_of_codechef_contests = data['number_of_codechef_contests']
+        if 'number_of_codeforces_questions' in data:
+            user.number_of_codeforces_questions = data['number_of_codeforces_questions']
+        if 'number_of_leetcode_questions' in data:
+            user.number_of_leetcode_questions = data['number_of_leetcode_questions']
+        if 'number_of_codechef_questions' in data:
+            user.number_of_codechef_questions = data['number_of_codechef_questions']
+        if 'global_rank_codeforces' in data:
+            user.global_rank_codeforces = data['global_rank_codeforces']
+        if 'global_rank_leetcode' in data:
+            user.global_rank_leetcode = data['global_rank_leetcode']
+        if 'global_rank_codechef' in data:
+            user.global_rank_codechef = data['global_rank_codechef']
         
         user.save()
         serializer = UserSerializer(user, many=False)

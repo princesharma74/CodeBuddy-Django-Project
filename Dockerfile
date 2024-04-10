@@ -14,6 +14,8 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN apt-get update
 RUN apt-get -y install pkg-config python3-dev default-libmysqlclient-dev build-essential
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
 
 # Copy project
 COPY . /code/
