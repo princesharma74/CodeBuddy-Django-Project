@@ -9,7 +9,7 @@ def getProblems(request):
     serializer = ProblemSerializer(problems, many=True)
     return Response(serializer.data)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getProblemsByUser(request, pk):
     problems = Problem.objects.filter(submitted_by=pk)
     serializer = ProblemSerializer(problems, many=True)
