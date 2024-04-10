@@ -40,6 +40,10 @@ def updateSubmissions(request, pk):
             problem.save()
             try: 
                 submission = Submission.objects.get(submission_id=sub['submission_id'])
+                submission.problem = problem
+                submission.submission_link = sub['submission_url']
+                submission.submitted_by = user
+                submission.save()
             except ObjectDoesNotExist:
                 submission = Submission.objects.create(
                     submission_id=sub['submission_id'],
