@@ -45,8 +45,8 @@ def updateSubmissions(request, pk):
                     submission_id=sub['submission_id'],
                     problem=problem,
                     submission_link=sub['submission_url'],
+                    submitted_by = user,
                 )
-                submission.submitted_by.add(user)
             retdata.append(submission)
         serializer = SubmissionSerializer(retdata, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
