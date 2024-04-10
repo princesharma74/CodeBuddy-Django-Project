@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .serializers import RoomSerializer, UserSerializer, ProblemSerializer, TopicSerializer, SubmissionSerializer, UserLoginSerializer
 
 @api_view(['GET'])
-def getProblems(request):
-    problems = Problem.objects.all()
+def getProblems(request, pk):
+    problems = Problem.objects.filter(submitted_by=pk)
     serializer = ProblemSerializer(problems, many=True)
     return Response(serializer.data)
