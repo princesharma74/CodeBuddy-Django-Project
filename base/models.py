@@ -108,15 +108,15 @@ class Problem(models.Model):
     url = models.URLField(primary_key=True)
     title = models.CharField(max_length=255)
     platform = models.CharField(max_length=10, choices=[('Codechef', 'Codechef'), ('Leetcode', 'Leetcode'), ('Codeforces', 'Codeforces')])
-    submitted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='problems')
+    submitted_by = models.ManyToManyField(User, related_name='problemstouser', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 
 class Submission(models.Model):
     submission_id = models.CharField(max_length=255, primary_key=True)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions', default='0')
-    submission_link = models.URLField()
     submitted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions', null=True)
+    submission_link = models.URLField()
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 
