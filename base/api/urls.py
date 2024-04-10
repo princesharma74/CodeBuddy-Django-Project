@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('user/<str:pk>/updatesubmissions', submissions.updateSubmissions),
     path('user/<str:pk>/submissions', submissions.getSubmissions),
+    path('user/<str:pk>/problems', problems.getProblemsByUser),
 
     # for problems
     path('problems/', problems.getProblems),

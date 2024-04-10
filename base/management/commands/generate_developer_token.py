@@ -3,16 +3,16 @@ from base.models import DevToken
 import secrets
 
 def generate_token(length=40):
-    """
-    Generate a random token of the specified length.
+    # Calculate the number of bytes needed for the desired length
+    num_bytes = (length + 1) // 2  # 2 characters per byte
 
-    Parameters:
-    length (int): Length of the token (default is 40)
+    # Generate token hex
+    token_hex = secrets.token_hex(num_bytes)
 
-    Returns:
-    str: Random token
-    """
-    return secrets.token_hex(length)
+    # Truncate or pad the token hex to the desired length
+    key = token_hex[:length]
+
+    return key
 
 class Command(BaseCommand):
     help = 'Generates and saves a token for the developer.'
