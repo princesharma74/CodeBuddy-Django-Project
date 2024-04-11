@@ -36,7 +36,7 @@ def updateUser(request, pk):
         if 'bio' in data:
             user.bio = data['bio']
         if 'gender' in data:
-            user.gender = data
+            user.gender = data['gender']
         if 'codechef_id' in data:
             user.codechef_id = data['codechef_id']
         if 'leetcode_id' in data:
