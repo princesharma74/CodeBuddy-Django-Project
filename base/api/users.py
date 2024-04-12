@@ -67,6 +67,8 @@ def updateUser(request, pk):
             user.global_rank_leetcode = data['global_rank_leetcode']
         if 'global_rank_codechef' in data:
             user.global_rank_codechef = data['global_rank_codechef']
+        if 'password'in data: 
+            user.set_password(data['password'])
         if 'avatar' in data:
             user.avatar = data['avatar']
 
@@ -76,17 +78,20 @@ def updateUser(request, pk):
     except ObjectDoesNotExist:
         return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
 
-'''
 @api_view(['POST'])
-def checkUserExists(request):
+def authUser(request, pk): 
     data = request.data
-    if 'username' not in data:
+    if 'password' not in data: 
         return Response({'error': 'Invalid user data'}, status = status.HTTP_400_BAD_REQUEST)
-    if User.objects.filter(username=data['username']).exists():
-        return Response({'message': 'User exists'}, status = status.HTTP_200_OK)
-    return Response({'message': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
-'''
-
+    try: 
+        user = User.objects.get(username=pk)
+        if user.check_password(data['password']):
+            serializer = UserSerializer(user, many=False)
+            return Response({'message': 'User authenticated', 'user': serializer.data}, status = status.HTTP_200_OK)
+        else: 
+            return Response({'error': 'Invalid credentials'}, status = status.HTTP_400_BAD_REQUEST)
+    except ObjectDoesNotExist:
+        return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def createUser(request, pk):
@@ -95,7 +100,7 @@ def createUser(request, pk):
         return Response({'message': 'User already exists'}, status = status.HTTP_200_OK)
     data = request.data
     # check if username, email, first_name, last_name exists and is not empty
-    if 'email' not in data or 'first_name' not in data or 'last_name' not in data:
+    if 'email' not in data or 'first_name' not in data or 'last_name' not in data or 'password' not in data: 
         return Response({'error': 'Invalid user data'}, status = status.HTTP_400_BAD_REQUEST)
     try: 
         user = User.objects.create(
@@ -136,6 +141,8 @@ def createUser(request, pk):
             user.global_rank_leetcode = data['global_rank_leetcode']
         if 'global_rank_codechef' in data:
             user.global_rank_codechef = data['global_rank_codechef']
+        if 'password' in data:
+            user.set_password(data['password'])
         
         user.save()
         serializer = UserSerializer(user, many=False)
