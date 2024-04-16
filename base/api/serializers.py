@@ -51,10 +51,4 @@ class RatingChangeSerializer(ModelSerializer):
 
     class Meta:
         model = RatingChange
-        fields = ['user', 'rating_change', 'rank', 'final_rating', 'number_of_problems_solved', 'time_taken', 'contest']
-
-    def create(self, validated_data):
-        contest_data = validated_data.pop('contest')
-        contest, _ = Contest.objects.get_or_create(**contest_data)
-        rating_change = RatingChange.objects.create(contest=contest, **validated_data)
-        return rating_change
+        fields = '__all__'
