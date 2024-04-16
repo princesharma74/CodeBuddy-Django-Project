@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, users, rooms, submissions, problems, topics
+from . import views, users, rooms, submissions, problems, topics, contests, rating_change
 
 
 urlpatterns = [
@@ -24,4 +24,12 @@ urlpatterns = [
 
     # for topics
     path('topics/', topics.getTopics),
+
+    # for contests
+    path('contests/create', contests.createContest),
+    path('get-contest', contests.getContest),
+
+    # for rating-change
+    path('rating-change', rating_change.createRatingChange ),
+
 ]
