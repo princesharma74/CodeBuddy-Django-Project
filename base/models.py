@@ -120,6 +120,33 @@ class Submission(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 
+class Contest(models.Model):
+    title = models.CharField(primary_key=True, max_length=255)
+    url = models.URLField()
+    platform = models.CharField(max_length=10, choices=[('Codechef', 'Codechef'), ('Leetcode', 'Leetcode'), ('Codeforces', 'Codeforces')])
+    start_time = models.DateTimeField()
+    duration = models.DurationField()
+    total_questions = models.IntegerField()
+    created_at = models.DateTimeField(default=timezone.now)
+    last_edited_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+class RatingChange(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating_change = models.IntegerField()
+    final_rating = models.IntegerField()
+    time_taken = models.DurationField(null=True)
+    rank = models.IntegerField()
+    number_of_problems_solved = models.IntegerField()
+    created_at = models.DateTimeField(default=timezone.now)
+    last_edited_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.contest}"
+
 class Topic(models.Model):
     name = models.CharField(max_length=200)
 
