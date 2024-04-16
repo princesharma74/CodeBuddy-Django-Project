@@ -30,6 +30,7 @@ urlpatterns = [
     path('get-contest', contests.getContest),
 
     # for rating-change
-    path('rating-change', rating_change.createRatingChange ),
+    path('rating-change', rating_change.createRatingChange),
+    path('get-rating-changes/<str:pk>', rating_change.getRatingChanges),
 
 ]

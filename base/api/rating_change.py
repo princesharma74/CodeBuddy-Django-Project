@@ -37,3 +37,11 @@ def createRatingChange(request):
     ratingchange = RatingChange.objects.filter(user=user, contest=contest).first()
     serializer = RatingChangeSerializer(ratingchange, many=False)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def getRatingChanges(request, pk):
+    # get all rating changes of a user
+    user = User.objects.get(username=pk)
+    rating_changes = RatingChange.objects.filter(user=user)
+    serializer = RatingChangeSerializer(rating_changes, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
