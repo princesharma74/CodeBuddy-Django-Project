@@ -116,6 +116,7 @@ class Submission(models.Model):
     submission_id = models.CharField(max_length=255, primary_key=True)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions', default='0')
     submitted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions', null=True)
+    submitted_at = models.DateTimeField(null=True)
     submission_link = models.URLField()
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
@@ -126,7 +127,7 @@ class Contest(models.Model):
     platform = models.CharField(max_length=10, choices=[('Codechef', 'Codechef'), ('Leetcode', 'Leetcode'), ('Codeforces', 'Codeforces')])
     start_time = models.DateTimeField()
     duration = models.DurationField()
-    total_questions = models.IntegerField()
+    total_questions = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
 
