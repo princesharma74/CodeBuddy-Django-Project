@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from base.models import Contest
+from rest_framework import status
 from .serializers import ContestSerializer
 
 @api_view(['GET'])
@@ -11,14 +12,17 @@ def getContests(request):
 
 @api_view(['POST'])
 def createContest(request):
-    serializer = ContestSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+    data = []
+    for contest in request.data: 
+        serializer = ContestSerializer(data=contest)
+        if serializer.is_valid():
+            serializer.save()
+        data.append(serializer.data)
+    return Response(data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def getContest(request):
     title = request.data['title']
     contest = Contest.objects.get(title=title)
     serializer = ContestSerializer(contest, many=False)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)

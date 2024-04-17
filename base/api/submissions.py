@@ -43,6 +43,8 @@ def updateSubmissions(request, pk):
                 submission.problem = problem
                 submission.submission_link = sub['submission_url']
                 submission.submitted_by = user
+                if 'submitted_at' in sub:
+                    submission.submitted_at = sub['submitted_at']
                 submission.save()
             except ObjectDoesNotExist:
                 submission = Submission.objects.create(
@@ -51,6 +53,9 @@ def updateSubmissions(request, pk):
                     submission_link=sub['submission_url'],
                     submitted_by = user,
                 )
+                if 'submitted_at' in sub:
+                    submission.submitted_at = sub['submitted_at']
+                    submission.save()
             retdata.append(submission)
         serializer = SubmissionSerializer(retdata, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
