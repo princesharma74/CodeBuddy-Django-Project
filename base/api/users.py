@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
-from base.models import User
+from base.models import User, Leetcode, Codechef, Codeforces
 from django.core.exceptions import ObjectDoesNotExist
-from .serializers import UserSerializer, CreateUserSerializer
+from .serializers import UserSerializer, BasicUserSerializer, LeetcodeSerializer, CodechefSerializer, CodeforcesSerializer
 
 
 @api_view(['GET'])
@@ -26,12 +26,52 @@ def getUser(request, pk):
 def updateUser(request, pk):
     try: 
         user = User.objects.get(username=pk)
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+        leetcode_data = data.pop('leetcode', None)
+        codechef_data = data.pop('codechef', None)
+        codeforces_data = data.pop('codeforces', None)
+        data['username'] = pk
+        if leetcode_data:
+            leetcode, _ = Leetcode.objects.get_or_create(
+                user=user,
+                id=leetcode_data.get('id', None),
+            )
+            leetcode.id = leetcode_data.get('id', None)
+            leetcode.rating = leetcode_data.get('rating', None)
+            leetcode.global_rank = leetcode_data.get('global_rank', None)
+            leetcode.number_of_contests = leetcode_data.get('number_of_contests', None)
+            leetcode.number_of_questions = leetcode_data.get('number_of_questions', None)
+            leetcode.save()
+        if codechef_data:
+            codechef, _ = Codechef.objects.get_or_create(
+                user=user,
+                id=codechef_data.get('id', None),
+            )
+            codechef.id = codechef_data.get('id', None)
+            codechef.rating = codechef_data.get('rating', None)
+            codechef.global_rank = codechef_data.get('global_rank', None)
+            codechef.number_of_contests = codechef_data.get('number_of_contests', None)
+            codechef.number_of_questions = codechef_data.get('number_of_questions', None)
+            codechef.save()
+
+        if codeforces_data:
+            codeforces, _ = Codeforces.objects.get_or_create(
+                user=user,
+                id=codeforces_data.get('id', None),
+            )
+            codeforces.id = codeforces_data.get('id', None)
+            codeforces.rating = codeforces_data.get('rating', None)
+            codeforces.global_rank = codeforces_data.get('global_rank', None)
+            codeforces.number_of_contests = codeforces_data.get('number_of_contests', None)
+            codeforces.number_of_questions = codeforces_data.get('number_of_questions', None)
+            codeforces.save()
+
+        user.leetcode = leetcode
+        user.codechef = codechef
+        user.codeforces = codeforces
+        user.save()
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     except ObjectDoesNotExist:
         return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -53,20 +93,55 @@ def authUser(request, pk):
 
 @api_view(['POST'])
 def createUser(request, pk):
-    try:
-        # Check if the user already exists
-        if User.objects.filter(username=pk).exists():
-            return Response({'message': 'User already exists'}, status=status.HTTP_200_OK)
-        
-        # Validate request data
-        request.data["username"] = pk
-        serializer = CreateUserSerializer(request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Create user
-        user = serializer.save(username=pk)
-        
-        return Response(user.data, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=pk).exists():
+        return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+    data = request.data
+    leetcode_data = data.pop('leetcode', None)
+    codechef_data = data.pop('codechef', None)
+    codeforces_data = data.pop('codeforces', None)
+    data['username'] = pk
+    serializer = BasicUserSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+    user = User.objects.get(username=pk)
+    if leetcode_data:
+        leetcode, _ = Leetcode.objects.get_or_create(
+            user=user,
+            id=leetcode_data.get('id', None),
+        )
+        leetcode.id = leetcode_data.get('id', None)
+        leetcode.rating = leetcode_data.get('rating', None)
+        leetcode.global_rank = leetcode_data.get('global_rank', None)
+        leetcode.number_of_contests = leetcode_data.get('number_of_contests', None)
+        leetcode.number_of_questions = leetcode_data.get('number_of_questions', None)
+        leetcode.save()
+    if codechef_data:
+        codechef, _ = Codechef.objects.get_or_create(
+            user=user,
+            id=codechef_data.get('id', None),
+        )
+        codechef.id = codechef_data.get('id', None)
+        codechef.rating = codechef_data.get('rating', None)
+        codechef.global_rank = codechef_data.get('global_rank', None)
+        codechef.number_of_contests = codechef_data.get('number_of_contests', None)
+        codechef.number_of_questions = codechef_data.get('number_of_questions', None)
+        codechef.save()
+
+    if codeforces_data:
+        codeforces, _ = Codeforces.objects.get_or_create(
+            user=user,
+            id=codeforces_data.get('id', None),
+        )
+        codeforces.id = codeforces_data.get('id', None)
+        codeforces.rating = codeforces_data.get('rating', None)
+        codeforces.global_rank = codeforces_data.get('global_rank', None)
+        codeforces.number_of_contests = codeforces_data.get('number_of_contests', None)
+        codeforces.number_of_questions = codeforces_data.get('number_of_questions', None)
+        codeforces.save()
+
+    user.leetcode = leetcode
+    user.codechef = codechef
+    user.codeforces = codeforces
+    user.save()
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

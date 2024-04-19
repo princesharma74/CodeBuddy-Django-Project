@@ -4,4 +4,5 @@ django-cors-headers
 Pillow
 django-tailwind
 django-environ
+cryptography
 pymysql

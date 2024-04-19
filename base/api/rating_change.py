@@ -10,18 +10,19 @@ def createRatingChange(request, username):
     data = request
     user = User.objects.get(username=username)
 
-    constest_data = data['contest']
-    if 'title' not in constest_data: 
+    contest_data = data['contest']
+    if 'title' not in contest_data: 
         return {'error': 'Invalid contest data'}
 
-    if not Contest.objects.filter(title=constest_data['title']).exists():
+    if not Contest.objects.filter(title=contest_data['title']).exists():
         try: 
-            serializer.save()
+            serializer = ContestSerializer(data=contest_data)
+            if serializer.is_valid():
+                serializer.save()
         except Exception as e:
             return {'error': str(e)}
-    else: 
-        contest = Contest.objects.get(title=constest_data['title'])
 
+    contest = Contest.objects.get(title=contest_data['title'])
     rating_changes = RatingChange.objects.filter(user=user, contest=contest)
 
     if not rating_changes.exists():
