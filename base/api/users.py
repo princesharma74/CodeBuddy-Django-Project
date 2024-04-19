@@ -36,7 +36,6 @@ def updateUser(request, pk):
                 user=user,
                 id=leetcode_data.get('id', None),
             )
-            leetcode.id = leetcode_data.get('id', None)
             leetcode.rating = leetcode_data.get('rating', None)
             leetcode.global_rank = leetcode_data.get('global_rank', None)
             leetcode.number_of_contests = leetcode_data.get('number_of_contests', None)
@@ -47,7 +46,6 @@ def updateUser(request, pk):
                 user=user,
                 id=codechef_data.get('id', None),
             )
-            codechef.id = codechef_data.get('id', None)
             codechef.rating = codechef_data.get('rating', None)
             codechef.global_rank = codechef_data.get('global_rank', None)
             codechef.number_of_contests = codechef_data.get('number_of_contests', None)
@@ -59,7 +57,6 @@ def updateUser(request, pk):
                 user=user,
                 id=codeforces_data.get('id', None),
             )
-            codeforces.id = codeforces_data.get('id', None)
             codeforces.rating = codeforces_data.get('rating', None)
             codeforces.global_rank = codeforces_data.get('global_rank', None)
             codeforces.number_of_contests = codeforces_data.get('number_of_contests', None)
@@ -109,7 +106,6 @@ def createUser(request, pk):
             user=user,
             id=leetcode_data.get('id', None),
         )
-        leetcode.id = leetcode_data.get('id', None)
         leetcode.rating = leetcode_data.get('rating', None)
         leetcode.global_rank = leetcode_data.get('global_rank', None)
         leetcode.number_of_contests = leetcode_data.get('number_of_contests', None)
@@ -120,7 +116,6 @@ def createUser(request, pk):
             user=user,
             id=codechef_data.get('id', None),
         )
-        codechef.id = codechef_data.get('id', None)
         codechef.rating = codechef_data.get('rating', None)
         codechef.global_rank = codechef_data.get('global_rank', None)
         codechef.number_of_contests = codechef_data.get('number_of_contests', None)
@@ -132,7 +127,6 @@ def createUser(request, pk):
             user=user,
             id=codeforces_data.get('id', None),
         )
-        codeforces.id = codeforces_data.get('id', None)
         codeforces.rating = codeforces_data.get('rating', None)
         codeforces.global_rank = codeforces_data.get('global_rank', None)
         codeforces.number_of_contests = codeforces_data.get('number_of_contests', None)
