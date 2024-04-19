@@ -4,22 +4,21 @@ from base.models import RatingChange, User, Contest
 from rest_framework import status
 from .serializers import RatingChangeSerializer, ContestSerializer
 
-@api_view(['POST'])
-def createRatingChange(request, pk):
-    if 'contest' not in request.data or 'rating_change' not in request.data or 'rank' not in request.data or 'final_rating' not in request.data or 'number_of_problems_solved' not in request.data:
-        return Response({'detail': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
-    data = request.data
-    user = User.objects.get(username=pk)
+def createRatingChange(request, username):
+    if 'contest' not in request or 'rating_change' not in request or 'rank' not in request or 'final_rating' not in request or 'number_of_problems_solved' not in request:
+        return {'detail': 'Invalid'}
+    data = request
+    user = User.objects.get(username=username)
 
     constest_data = data['contest']
     if 'title' not in constest_data: 
-        return Response({'error': 'Invalid contest data'}, status=status.HTTP_400_BAD_REQUEST)
+        return {'error': 'Invalid contest data'}
 
     if not Contest.objects.filter(title=constest_data['title']).exists():
         try: 
             serializer.save()
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return {'error': str(e)}
     else: 
         contest = Contest.objects.get(title=constest_data['title'])
 
@@ -44,7 +43,14 @@ def createRatingChange(request, pk):
 
     ratingchange = RatingChange.objects.filter(user=user, contest=contest).first()
     serializer = RatingChangeSerializer(ratingchange, many=False)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return serializer.data
+
+@api_view(['POST'])
+def createRatingChanges(request, pk):
+    ret = []
+    for data in request.data: 
+        ret.append(createRatingChange(data, pk))
+    return Response(ret, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def getRatingChanges(request, pk):

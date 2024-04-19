@@ -4,33 +4,20 @@ from . import views, users, rooms, submissions, problems, topics, contests, rati
 
 urlpatterns = [
     path('', views.getRoutes),
-    # for rooms
     path('rooms', rooms.getRooms),
     path('room/<str:pk>', rooms.getRoom),
-    
-    # for users
     path('users/', users.getUsers),
     path('user/<str:pk>', users.getUser),
     path('user/<str:pk>/create', users.createUser),
-
     path('user/<str:pk>/update', users.updateUser),
-
     path('user/<str:pk>/updatesubmissions', submissions.updateSubmissions),
     path('user/<str:pk>/submissions', submissions.getSubmissions),
-    # for problems
     path('problems', problems.getProblems),
     path('user/<str:pk>/problems', problems.getProblemsByUser),
     path('user/<str:pk>/authenticate', users.authUser),
     path('user/<str:pk>/get-rating-changes', rating_change.getRatingChanges),
-    # for rating-change
-    path('user/<str:pk>/create-rating-changes', rating_change.createRatingChange),
-
-
-    # for topics
+    path('user/<str:pk>/create-rating-changes', rating_change.createRatingChanges),
     path('topics', topics.getTopics),
-
-    # for contests
     path('contests/create', contests.createContest),
     path('get-contest', contests.getContest),
-
 ]
