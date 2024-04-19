@@ -32,20 +32,26 @@ def updateUser(request, pk):
         codeforces_data = data.pop('codeforces', None)
         data['username'] = pk
         if leetcode_data:
-            leetcode, _ = Leetcode.objects.get_or_create(
-                user=user,
-                id=leetcode_data.get('id', None),
-            )
+            if not Leetcode.objects.filter(user=user).exists():
+                leetcode, _ = Leetcode.objects.get_or_create(
+                    user=user,
+                    id=leetcode_data.get('id', None),
+                )
+            else: 
+                leetcode = Leetcode.objects.get(user=user)
             leetcode.rating = leetcode_data.get('rating', None)
             leetcode.global_rank = leetcode_data.get('global_rank', None)
             leetcode.number_of_contests = leetcode_data.get('number_of_contests', None)
             leetcode.number_of_questions = leetcode_data.get('number_of_questions', None)
             leetcode.save()
         if codechef_data:
-            codechef, _ = Codechef.objects.get_or_create(
-                user=user,
-                id=codechef_data.get('id', None),
-            )
+            if not Codechef.objects.filter(user=user).exists():
+                codechef, _ = Codechef.objects.get_or_create(
+                    user=user,
+                    id=codechef_data.get('id', None),
+                )
+            else:
+                codechef = Codechef.objects.get(user=user)
             codechef.rating = codechef_data.get('rating', None)
             codechef.global_rank = codechef_data.get('global_rank', None)
             codechef.number_of_contests = codechef_data.get('number_of_contests', None)
@@ -53,10 +59,13 @@ def updateUser(request, pk):
             codechef.save()
 
         if codeforces_data:
-            codeforces, _ = Codeforces.objects.get_or_create(
-                user=user,
-                id=codeforces_data.get('id', None),
-            )
+            if not Codeforces.objects.filter(user=user).exists():
+                codeforces, _ = Codeforces.objects.get_or_create(
+                    user=user,
+                    id=codeforces_data.get('id', None),
+                )
+            else:
+                codeforces = Codeforces.objects.get(user=user)
             codeforces.rating = codeforces_data.get('rating', None)
             codeforces.global_rank = codeforces_data.get('global_rank', None)
             codeforces.number_of_contests = codeforces_data.get('number_of_contests', None)
