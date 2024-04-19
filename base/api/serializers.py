@@ -75,7 +75,7 @@ class SubmissionSerializer(ModelSerializer):
 class ContestSerializer(ModelSerializer):
     class Meta:
         model = Contest
-        fields = '__all__'
+        exclude = ['created_at', 'last_edited_at']
 
 
 class RatingChangeSerializer(ModelSerializer):
@@ -83,4 +83,4 @@ class RatingChangeSerializer(ModelSerializer):
 
     class Meta:
         model = RatingChange
-        fields = '__all__'
+        exclude = ['created_at', 'last_edited_at']

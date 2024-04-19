@@ -22,7 +22,11 @@ def createContest(request):
 
 @api_view(['GET'])
 def getContest(request):
+    if 'title' not in request.data:
+        return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
     title = request.data['title']
+    if not Contest.objects.filter(title=title).exists():
+        return Response({'error': 'Contest does not exist'}, status=status.HTTP_404_NOT_FOUND)
     contest = Contest.objects.get(title=title)
     serializer = ContestSerializer(contest, many=False)
     return Response(serializer.data, status=status.HTTP_200_OK)

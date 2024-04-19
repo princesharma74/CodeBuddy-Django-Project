@@ -60,7 +60,7 @@ def createUser(request, pk):
         
         # Validate request data
         request.data["username"] = pk
-        serializer = CreateUserSerializer(data=request.data)
+        serializer = CreateUserSerializer(request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
