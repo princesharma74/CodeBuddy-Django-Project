@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from base.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CreateUserSerializer
 
 
 @api_view(['GET'])
@@ -60,13 +60,13 @@ def createUser(request, pk):
         
         # Validate request data
         request.data["username"] = pk
-        serializer = UserSerializer(data=request.data)
+        serializer = CreateUserSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         # Create user
         user = serializer.save(username=pk)
         
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(user.data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

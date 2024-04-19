@@ -1,13 +1,31 @@
 # classes that take a python object to convert into json object
-from rest_framework.serializers import ModelSerializer, CharField, Serializer, ValidationError
-from base.models import Room, User, Problem, Topic, Submission, Contest, RatingChange
+from rest_framework.serializers import ModelSerializer, CharField, Serializer
+from base.models import Room, User, Problem, Topic, Submission, Contest, RatingChange, Leetcode, Codechef, Codeforces
 
 class RoomSerializer(ModelSerializer): 
     class Meta: 
         model = Room
         fields = '__all__'
 
+class LeetcodeSerializer(ModelSerializer):
+    class Meta:
+        model = Leetcode
+        fields = '__all__'
+
+class CodechefSerializer(ModelSerializer):
+    class Meta:
+        model = Codechef
+        fields = '__all__'
+
+class CodeforcesSerializer(ModelSerializer):
+    class Meta:
+        model = Codeforces
+        fields = '__all__'
+
 class UserSerializer(ModelSerializer):
+    leetcode = LeetcodeSerializer()  # Nested serializer for Leetcode
+    codechef = CodechefSerializer()  # Nested serializer for Codechef
+    codeforces = CodeforcesSerializer()  # Nested serializer for Codeforces
     class Meta:
         model = User
         fields = '__all__'  # Or specify the fields you want to include
@@ -20,6 +38,18 @@ class UserSerializer(ModelSerializer):
             instance.set_password(validated_data.pop('password'))  # Set password securely
         return super().update(instance, validated_data)
 
+class CreateUserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'  # Or specify the fields you want to include
+        extra_kwargs = {
+            'password': {'write_only': True},  # Ensure password is write-only
+        }
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data.pop('password'))  # Set password securely
+        return super().update(instance, validated_data)
 
 class UserLoginSerializer(Serializer):
     username = CharField(max_length=255)
@@ -36,9 +66,11 @@ class TopicSerializer(ModelSerializer):
         fields = '__all__'
 
 class SubmissionSerializer(ModelSerializer):
+    problem = CharField(source='problem.title', read_only=True)
     class Meta:
         model = Submission
-        fields = '__all__'
+        # all fields except created_at, last_edited_at, submitted_by
+        exclude = ['created_at', 'last_edited_at', 'submitted_by']
 
 class ContestSerializer(ModelSerializer):
     class Meta:
