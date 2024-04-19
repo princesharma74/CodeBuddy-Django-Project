@@ -21,11 +21,13 @@ def getUser(request, pk):
     except ObjectDoesNotExist:
         return Response({'error': 'User does not exist'}, status = status.HTTP_404_NOT_FOUND)
 
-
 @api_view(['PATCH'])
 def updateUser(request, pk):
     try: 
         user = User.objects.get(username=pk)
+        if 'password' in request.data:
+            user.set_password(request.data['password'])
+            user.save()
         data = request.data
         leetcode_data = data.pop('leetcode', None)
         codechef_data = data.pop('codechef', None)
@@ -110,6 +112,9 @@ def createUser(request, pk):
     if serializer.is_valid():
         serializer.save()
     user = User.objects.get(username=pk)
+    if 'password' in data:
+        user.set_password(data['password'])
+        user.save()
     if leetcode_data:
         leetcode, _ = Leetcode.objects.get_or_create(
             user=user,
