@@ -23,6 +23,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Developer token already exists."))
             self.stdout.write(self.style.SUCCESS(f"Developer token: {DevToken.objects.first().token}"))
         else: 
-            developer_token = generate_token()
+            developer_token = 'fda3b62cfdbff2aaf6c75481c5886738eb2f0578'
             DevToken.objects.create(token=developer_token, description="Developer Token")
             self.stdout.write(self.style.SUCCESS(f"Developer token: {developer_token}"))        

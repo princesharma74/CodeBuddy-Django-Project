@@ -53,22 +53,9 @@ class User(AbstractBaseUser):
     bio = models.TextField(null=True)
     gender = models.CharField(max_length=6, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], default='Male')
 
-    codechef_id = models.CharField(max_length=255, null=True)
-    leetcode_id = models.CharField(max_length=255, null=True)
-    codeforces_id = models.CharField(max_length=255, null=True)
-
-    codechef_rating = models.IntegerField(null=True)
-    leetcode_rating = models.IntegerField(null=True)
-    codeforces_rating = models.IntegerField(null=True)
-    global_rank_codeforces = models.IntegerField(null=True)
-    global_rank_leetcode = models.IntegerField(null=True)
-    global_rank_codechef = models.IntegerField(null=True)
-    number_of_codeforces_contests = models.IntegerField(null=True)
-    number_of_leetcode_contests = models.IntegerField(null=True)
-    number_of_codechef_contests = models.IntegerField(null=True)
-    number_of_codeforces_questions = models.IntegerField(null=True)
-    number_of_leetcode_questions = models.IntegerField(null=True)
-    number_of_codechef_questions = models.IntegerField(null=True)
+    leetcode = models.ForeignKey('Leetcode', on_delete=models.CASCADE, null=True, related_name='LeetcodeToUser')
+    codechef = models.ForeignKey('Codechef', on_delete=models.CASCADE, null=True, related_name='CodechefToUser')
+    codeforces = models.ForeignKey('Codeforces', on_delete=models.CASCADE, null=True, related_name='CodeforcesToUser')
 
     created_at = models.DateTimeField(default=timezone.now, null=True)
     last_edited_at = models.DateTimeField(auto_now=True)
@@ -104,6 +91,51 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+class Leetcode(models.Model): 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="LeetcodeToUser")
+    id = models.CharField(max_length=255, primary_key=True)
+    rating = models.IntegerField(null=True)
+    global_rank = models.IntegerField(null=True)
+    number_of_contests = models.IntegerField(null=True)
+    number_of_questions = models.IntegerField(null=True)
+
+    @property
+    def url(self):
+        return f"https://leetcode.com/{self.id}"
+    
+    def __str__(self):
+        return self.user.full_name + "'s Leetcode Profile"
+
+class Codeforces(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='CodeforcesToUser')
+    id = models.CharField(max_length=255, primary_key=True)
+    rating = models.IntegerField(null=True)
+    global_rank = models.IntegerField(null=True)
+    number_of_contests = models.IntegerField(null=True)
+    number_of_questions = models.IntegerField(null=True)
+
+    @property
+    def url(self):
+        return f"https://codeforces.com/profile/{self.id}"
+
+    def __str__(self):
+        return self.user.full_name + "'s Codeforces Profile"
+
+class Codechef(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='CodechefToUser')
+    id = models.CharField(max_length=255, primary_key=True)
+    rating = models.IntegerField(null=True)
+    global_rank = models.IntegerField(null=True)
+    number_of_contests = models.IntegerField(null=True)
+    number_of_questions = models.IntegerField(null=True)
+
+    @property
+    def url(self):
+        return f"https://www.codechef.com/users/{self.id}"
+    
+    def __str__(self):
+        return self.user.full_name + "'s Codechef Profile"
+
 class Problem(models.Model):
     url = models.URLField(primary_key=True)
     title = models.CharField(max_length=255)
@@ -111,6 +143,9 @@ class Problem(models.Model):
     submitted_by = models.ManyToManyField(User, related_name='problemstouser', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
 
 class Submission(models.Model):
     submission_id = models.CharField(max_length=255, primary_key=True)
