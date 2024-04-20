@@ -1,11 +1,7 @@
 # classes that take a python object to convert into json object
 from rest_framework.serializers import ModelSerializer, CharField, Serializer
-from base.models import Room, User, Problem, Topic, Submission, Contest, RatingChange, Leetcode, Codechef, Codeforces
+from base.models import Room, User, Problem, Topic, Submission, Contest, RatingChange, Leetcode, Codechef, Codeforces, Message
 
-class RoomSerializer(ModelSerializer): 
-    class Meta: 
-        model = Room
-        fields = '__all__'
 
 class BasicUserSerializer(ModelSerializer):
     class Meta:
@@ -50,6 +46,10 @@ class UserSerializer(ModelSerializer):
             instance.set_password(validated_data.pop('password'))  # Set password securely
         return super().update(instance, validated_data)
 
+class RoomSerializer(ModelSerializer): 
+    class Meta: 
+        model = Room
+        fields = '__all__'
 class UserLoginSerializer(Serializer):
     username = CharField(max_length=255)
     password = CharField(max_length=128)
@@ -83,3 +83,8 @@ class RatingChangeSerializer(ModelSerializer):
     class Meta:
         model = RatingChange
         exclude = ['created_at', 'last_edited_at']
+
+class MessageSerializer(ModelSerializer):
+    class Meta:
+        model = Message
+        exclude = ['room']
