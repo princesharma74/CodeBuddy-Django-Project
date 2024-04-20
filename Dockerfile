@@ -1,4 +1,3 @@
-# Pull the official base image
 FROM python:3.8-slim-buster
 
 # Set environment variables
