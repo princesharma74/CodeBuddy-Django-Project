@@ -30,22 +30,22 @@
           <a href="{{user.leetcode_url}}" target="_blank">
             <div class="platform__card">
                 <img src="{% static 'images/leetcode.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.leetcode_rating}}</h2>
-                <p>{{user.leetcode_id}}</p>
+                <h2>{{user.leetcode.rating}}</h2>
+                <p>{{user.leetcode.id}}</p>
             </div>
           </a>
           <a href="{{user.codechef_url}}" target="_blank">
             <div class="platform__card">
                 <img src="{% static 'images/codechef.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.codechef_rating}}</h2>
-                <p>{{user.codechef_id}}</p>
+                <h2>{{user.codechef.rating}}</h2>
+                <p>{{user.codechef.id}}</p>
             </div>
           </a>
           <a href="{{user.codeforces_url}}" target="_blank">
             <div class="platform__card">
                 <img src="{% static 'images/codeforces.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.codeforces_rating}}</h2>
-                <p>{{user.codeforces_id}}</p>
+                <h2>{{user.codeforces.rating}}</h2>
+                <p>{{user.codeforces.id}}</p>
             </div>
           </a>
 

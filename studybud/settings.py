@@ -30,7 +30,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['localhost','13.48.96.215', 'ec2-13-48-96-215.eu-north-1.compute.amazonaws.com']
+ALLOWED_HOSTS = ['localhost','13.48.96.215', '72zlh1l27i.execute-api.ap-south-1.amazonaws.com']
 
 
 # Application definition
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'tailwind',
+    'storages'
 ]
 
 AUTH_USER_MODEL = 'base.User'
@@ -148,6 +149,7 @@ MEDIA_URL = '/images/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_ROOT = BASE_DIR / 'static/images'
 
@@ -159,3 +161,16 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+STATIC_URL = "static/"
+AWS_STORAGE_BUCKET_NAME = "studybud-staticfiles-bucket-aws"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_FILE_OVERWRITE = False
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    }
+}

@@ -31,5 +31,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo apt-get -y update
+            sudo apt install apache2 -y
             cd /home/ubuntu/CodeBuddy-Django-Project
             docker compose up -d
