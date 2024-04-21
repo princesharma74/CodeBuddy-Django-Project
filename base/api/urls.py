@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/<str:pk>', users.getUser),
     path('user/<str:pk>/create', users.createUser),
     path('user/<str:pk>/room/create', rooms.createRoom),
+    path('user/<str:pk>/rooms/create', rooms.createRooms),
     path('user/<str:pk>/update', users.updateUser),
     path('user/<str:pk>/updatesubmissions', submissions.updateSubmissions),
     path('user/<str:pk>/submissions', submissions.getSubmissions),

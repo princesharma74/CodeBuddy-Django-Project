@@ -192,7 +192,7 @@ class Topic(models.Model):
 
 class Room(models.Model):
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True) # if the Topic were defined below all other models, it should be wrapped in single quotes.
+    topic = models.ManyToManyField(Topic, related_name="topics", blank=True) # if the Topic were defined below all other models, it should be wrapped in single quotes.
     name = models.CharField(max_length=200)
     # setting null = true means it can be blank. null is for the databases, blank is for the form and saving
     description = models.TextField(null=True, blank=True)

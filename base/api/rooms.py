@@ -28,14 +28,15 @@ def createRoom(request, pk):
     if not User.objects.filter(username=pk).exists():
         return Response({'error': 'Host does not exist'}, status = status.HTTP_404_NOT_FOUND)
     user = User.objects.get(username=pk)
-    if 'topic' in request.data:
-        topic, created = Topic.objects.get_or_create(name=request.data['topic'])
     room = Room.objects.create(
         host = user,
-        topic = topic,
         name = request.data['name'],
         description = request.data['description'], 
     )
+    if 'topic' in request.data:
+        for topic in request.data['topic']:
+            topic, created = Topic.objects.get_or_create(name=topic)
+            room.topic.add(topic)
     room.participants.add(user)
     serializer = RoomSerializer(room, many=False)
     return Response(serializer.data, status = status.HTTP_201_CREATED)
@@ -48,8 +49,10 @@ def updateRoom(request, pk):
         room = Room.objects.get(id=pk)
         room.name = request.data['name']
         room.description = request.data['description']
-        topic, created = Topic.objects.get_or_create(name=request.data['topic'])
-        room.topic = topic
+        if 'topic' in request.data:
+            for topic in request.data['topic']:
+                topic, created = Topic.objects.get_or_create(name=topic)
+                room.topic.add(topic)
         room.save()
         serializer = RoomSerializer(room, many=False)
         return Response(serializer.data, status = status.HTTP_200_OK)
@@ -105,3 +108,24 @@ def sendMessage(request, pk):
         return Response(serializer.data, status = status.HTTP_200_OK)
     except ObjectDoesNotExist:
         return Response({'error': 'Room does not exist'}, status = status.HTTP_404_NOT_FOUND)
+
+@api_view( ['POST'] )
+def createRooms(request, pk): 
+    if not User.objects.filter(username=pk).exists():
+        return Response({'error': 'Host does not exist'}, status = status.HTTP_404_NOT_FOUND)
+    user = User.objects.get(username=pk)
+    for room in request.data:
+        room_data = room
+        room = Room.objects.create(
+            host = user,
+            name = room['name'],
+            description = room['description'], 
+        )
+        if 'topic' in room_data:
+            for topic in room_data['topic']:
+                topic_obj, created = Topic.objects.get_or_create(name=topic)
+                room.topic.add(topic_obj)
+        room.participants.add(user)
+    rooms = Room.objects.all()
+    serializer = RoomSerializer(rooms, many=True)
+    return Response(serializer.data, status = status.HTTP_201_CREATED)

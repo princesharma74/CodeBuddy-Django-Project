@@ -46,7 +46,12 @@ class UserSerializer(ModelSerializer):
             instance.set_password(validated_data.pop('password'))  # Set password securely
         return super().update(instance, validated_data)
 
+class TopicSerializer(ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = '__all__'
 class RoomSerializer(ModelSerializer): 
+    topic = TopicSerializer()
     class Meta: 
         model = Room
         fields = '__all__'
@@ -59,10 +64,6 @@ class ProblemSerializer(ModelSerializer):
         model = Problem
         fields = '__all__'
 
-class TopicSerializer(ModelSerializer):
-    class Meta:
-        model = Topic
-        fields = '__all__'
 
 class SubmissionSerializer(ModelSerializer):
     problem = CharField(source='problem.title', read_only=True)
