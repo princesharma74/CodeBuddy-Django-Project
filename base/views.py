@@ -65,7 +65,7 @@ def registerUser(request):
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     # here __ means going to the parent of topic, topic here is the attribute of the table and topic__name is the parent topic's attribute
-    rooms = Room.objects.filter( Q( topic__name__icontains=q ) | 
+    rooms = Room.objects.filter( Q( topics__name__icontains=q ) | 
                                  Q(name__icontains=q) |
                                  Q(description__icontains=q) )
     # i means case insensitive and 'contains' double checks if the query exists or not
@@ -73,7 +73,7 @@ def home(request):
 
     topics = Topic.objects.all()[0:5]
     room_count = rooms.count() # count function is faster than len function
-    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    room_messages = Message.objects.filter(Q(room__topics__name__icontains=q))
     
     context = {'rooms': rooms, 'topics' : topics, 'room_count': room_count, 'room_messages': room_messages}
     return render(request, 'base/home.html', context) # here the list of rooms is passed in the form of dictionary
@@ -117,14 +117,15 @@ def createRoom(request):
     form = RoomForm()
     topics = Topic.objects.all()
     if request.method == 'POST': 
-        topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name=topic_name) # if newly one is created, created will be true otherwise it will be false. 
+        topics = request.POST.get('topic')
         Room.objects.create(
             host = request.user, 
-            topic = topic, 
             name = request.POST.get('name'),
             description = request.POST.get('description'),
         )
+        for topic in topics: 
+            t, created = Topic.objects.get_or_create(name=topic)
+            room.topics.add(t)
         return redirect('home')
         # print(request.POST) # prints all the data filled by user
         # print(request.POST.name) # prints only name attribute of the form
@@ -133,27 +134,29 @@ def createRoom(request):
         #     room = form.save(commit=False)
         #     room.host = request.user
         #     room.save()
-    context = {'form' : form, 'topics' : topics}
+    context = {'form' : form, 'topics' : room.topics}
     return render(request, 'base/room_form.html', context)
 
 @login_required(login_url='login')
 def updateRoom(request, pk): 
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
-    topics = Topic.objects.all()
 
     if request.user != room.host: 
         return HttpResponse('You are not the owner.')
 
     if request.method == 'POST': 
-        topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name=topic_name) # if newly one is created, created will be true otherwise it will be false. 
+        topics = request.POST.get('topics')
+        room.topics.clear()
+        for topic in topics: 
+            t, created = Topic.objects.get_or_create(name=topic)
+            room.topics.add(t)
         room.name = request.POST.get('name')
-        room.topic = topic
         room.description = request.POST.get('description')
         room.save()
         return redirect('home')
     
+    topics = Topic.objects.all()
     context = {'form' : form, 'topics' : topics, 'room' : room}
     return render(request, 'base/room_form.html', context)
 

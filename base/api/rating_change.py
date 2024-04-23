@@ -2,49 +2,44 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from base.models import RatingChange, User, Contest
 from rest_framework import status
-from .serializers import RatingChangeSerializer, ContestSerializer
+from .serializers import RatingChangeSerializer, ContestSerializer, BasicRatingChangeSerializer
 
-def createRatingChange(request, username):
-    if 'contest' not in request or 'rating_change' not in request or 'rank' not in request or 'final_rating' not in request or 'number_of_problems_solved' not in request:
-        return {'detail': 'Invalid'}
-    data = request
+def createRatingChange(data, username):
+    if 'user' not in data:
+        return {"error": "User not provided"}
     user = User.objects.get(username=username)
-
-    contest_data = data['contest']
-    if 'title' not in contest_data: 
-        return {'error': 'Invalid contest data'}
-
-    if not Contest.objects.filter(title=contest_data['title']).exists():
-        try: 
-            serializer = ContestSerializer(data=contest_data)
-            if serializer.is_valid():
-                serializer.save()
-        except Exception as e:
-            return {'error': str(e)}
-
-    contest = Contest.objects.get(title=contest_data['title'])
-    rating_changes = RatingChange.objects.filter(user=user, contest=contest)
-
-    if not rating_changes.exists():
-        RatingChange.objects.create(
-            user=user, 
-            contest=contest,
-            rating_change=data['rating_change'], 
-            rank=data['rank'], 
-            final_rating=data['final_rating'], 
-            number_of_problems_solved=data['number_of_problems_solved']
-        )
+    # check if contest exists
+    if 'contest' not in data or 'title' not in data['contest']:
+        return {"error": "Contest not provided"}
+    if Contest.objects.filter(title=data['contest']['title']).exists():
+        contest = Contest.objects.get(title=data['contest']['title'])
+        contest_serializer = ContestSerializer(instance=contest, data=data['contest'])
+        if contest_serializer.is_valid():
+            contest = contest_serializer.save()        
+        else:
+            return {"error": contest_serializer.errors}
     else:
-        rating_change = rating_changes.first()
-        rating_change.rating_change = data['rating_change']
-        rating_change.rank = data['rank']
-        rating_change.final_rating = data['final_rating']
-        rating_change.number_of_problems_solved = data['number_of_problems_solved']
+        contest_serializer = ContestSerializer(data=data['contest'])
+        if contest_serializer.is_valid():
+            contest = contest_serializer.save()
+        else:
+            return {"error": contest_serializer.errors}
+    data.pop('contest')
+    if RatingChange.objects.filter(contest=contest, user=user).exists():
+        rating_change_obj = RatingChange.objects.get(contest=contest, user=user)
+        rating_change_serializer = BasicRatingChangeSerializer(instance=rating_change_obj, data=data)
+    else:
+        rating_change_serializer = BasicRatingChangeSerializer(data=data)
+    if rating_change_serializer.is_valid():
+        rating_change = rating_change_serializer.save()
+        rating_change.contest = contest
+        rating_change.user = user
         rating_change.save()
-
-    ratingchange = RatingChange.objects.filter(user=user, contest=contest).first()
-    serializer = RatingChangeSerializer(ratingchange, many=False)
-    return serializer.data
+    else:
+        return {"error": rating_change_serializer.errors}
+    rating_change_serializer = RatingChangeSerializer(rating_change)
+    return rating_change_serializer.data
+    
 
 @api_view(['POST'])
 def createRatingChanges(request, pk):

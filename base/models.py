@@ -40,18 +40,18 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser): 
+    objects = UserManager()
+    username = models.CharField(max_length=255, primary_key=True)
+
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-
-    objects = UserManager()
-
-    username = models.CharField(max_length=255, primary_key=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, null=True)
+    last_name = models.CharField(max_length=255, null=True)
     email = models.EmailField(unique=True, null=True)
     bio = models.TextField(null=True)
     gender = models.CharField(max_length=6, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], default='Male')
+    avatar = models.ImageField(null=True, default="avatar.svg")
 
     leetcode = models.ForeignKey('Leetcode', on_delete=models.CASCADE, null=True, related_name='LeetcodeToUser')
     codechef = models.ForeignKey('Codechef', on_delete=models.CASCADE, null=True, related_name='CodechefToUser')
@@ -59,9 +59,6 @@ class User(AbstractBaseUser):
 
     created_at = models.DateTimeField(default=timezone.now, null=True)
     last_edited_at = models.DateTimeField(auto_now=True)
-
-
-    avatar = models.ImageField(null=True, default="avatar.svg")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
@@ -92,8 +89,7 @@ class User(AbstractBaseUser):
         return self.username
 
 class Leetcode(models.Model): 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="LeetcodeToUser")
-    id = models.CharField(max_length=255, primary_key=True)
+    user_id = models.CharField(max_length=255, null=True)
     rating = models.IntegerField(null=True)
     global_rank = models.IntegerField(null=True)
     number_of_contests = models.IntegerField(null=True)
@@ -107,8 +103,7 @@ class Leetcode(models.Model):
         return self.user.full_name + "'s Leetcode Profile"
 
 class Codeforces(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='CodeforcesToUser')
-    id = models.CharField(max_length=255, primary_key=True)
+    user_id = models.CharField(max_length=255, null=True)
     rating = models.IntegerField(null=True)
     global_rank = models.IntegerField(null=True)
     number_of_contests = models.IntegerField(null=True)
@@ -122,8 +117,7 @@ class Codeforces(models.Model):
         return self.user.full_name + "'s Codeforces Profile"
 
 class Codechef(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='CodechefToUser')
-    id = models.CharField(max_length=255, primary_key=True)
+    user_id = models.CharField(max_length=255, null=True)
     rating = models.IntegerField(null=True)
     global_rank = models.IntegerField(null=True)
     number_of_contests = models.IntegerField(null=True)
@@ -161,7 +155,7 @@ class Contest(models.Model):
     url = models.URLField()
     platform = models.CharField(max_length=10, choices=[('Codechef', 'Codechef'), ('Leetcode', 'Leetcode'), ('Codeforces', 'Codeforces')])
     start_time = models.DateTimeField()
-    duration = models.DurationField()
+    duration = models.DurationField(null=True)
     total_questions = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_edited_at = models.DateTimeField(auto_now=True)
@@ -170,8 +164,8 @@ class Contest(models.Model):
         return self.title
 
 class RatingChange(models.Model):
-    contest = models.ForeignKey(Contest, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     rating_change = models.IntegerField()
     final_rating = models.IntegerField()
     time_taken = models.DurationField(null=True)
@@ -192,7 +186,7 @@ class Topic(models.Model):
 
 class Room(models.Model):
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    topic = models.ManyToManyField(Topic, related_name="topics", blank=True) # if the Topic were defined below all other models, it should be wrapped in single quotes.
+    topics = models.ManyToManyField(Topic, related_name="topics", blank=True) # if the Topic were defined below all other models, it should be wrapped in single quotes.
     name = models.CharField(max_length=200)
     # setting null = true means it can be blank. null is for the databases, blank is for the form and saving
     description = models.TextField(null=True, blank=True)

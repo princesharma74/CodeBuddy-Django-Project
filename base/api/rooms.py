@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from base.models import Room, User, Topic, Message
 from django.core.exceptions import ObjectDoesNotExist
 from .serializers import RoomSerializer, MessageSerializer
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # for rooms
 # ---------------------------------------------------
@@ -13,6 +14,20 @@ def getRooms(request):
     rooms = Room.objects.all()
     serializer = RoomSerializer(rooms, many=True)
     return Response(serializer.data, status = status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getRoomsPaginated(request):
+    rooms = Room.objects.all()
+    paginator = Paginator(rooms, 1)
+    page = request.GET.get('page')
+    try:
+        rooms = paginator.get_page(page)
+    except PageNotAnInteger:
+        rooms = paginator.get_page(1)
+    except EmptyPage:
+        rooms = paginator.get_page(paginator.num_pages)
+    return Response(rooms, status = status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def getRoom(request, pk):
@@ -33,10 +48,10 @@ def createRoom(request, pk):
         name = request.data['name'],
         description = request.data['description'], 
     )
-    if 'topic' in request.data:
-        for topic in request.data['topic']:
+    if 'topics' in request.data:
+        for topic in request.data['topics']:
             topic, created = Topic.objects.get_or_create(name=topic)
-            room.topic.add(topic)
+            room.topics.add(topic)
     room.participants.add(user)
     serializer = RoomSerializer(room, many=False)
     return Response(serializer.data, status = status.HTTP_201_CREATED)
@@ -49,10 +64,11 @@ def updateRoom(request, pk):
         room = Room.objects.get(id=pk)
         room.name = request.data['name']
         room.description = request.data['description']
-        if 'topic' in request.data:
-            for topic in request.data['topic']:
+        if 'topics' in request.data:
+            room.topics.clear()
+            for topic in request.data['topics']:
                 topic, created = Topic.objects.get_or_create(name=topic)
-                room.topic.add(topic)
+                room.topics.add(topic)
         room.save()
         serializer = RoomSerializer(room, many=False)
         return Response(serializer.data, status = status.HTTP_200_OK)
@@ -121,10 +137,10 @@ def createRooms(request, pk):
             name = room['name'],
             description = room['description'], 
         )
-        if 'topic' in room_data:
-            for topic in room_data['topic']:
-                topic_obj, created = Topic.objects.get_or_create(name=topic)
-                room.topic.add(topic_obj)
+        if 'topics' in room_data:
+            for topic in room_data['topics']:
+                topic, created = Topic.objects.get_or_create(name=topic)
+                room.topics.add(topic)
         room.participants.add(user)
     rooms = Room.objects.all()
     serializer = RoomSerializer(rooms, many=True)
