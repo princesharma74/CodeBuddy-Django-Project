@@ -5,6 +5,9 @@ from . import views, users, rooms, submissions, problems, topics, contests, rati
 urlpatterns = [
     path('', views.getRoutes),
     path('rooms', rooms.getRooms),
+    path('roomspaginated', rooms.getRoomsPaginated),
+    path('contests', contests.getContests),
+    path('contests/upcoming', contests.getUpcomingContests),
     path('room/<str:pk>/messages', messages.getMessages),
     path('room/<str:pk>', rooms.getRoom),
     path('users/', users.getUsers),
@@ -26,5 +29,4 @@ urlpatterns = [
     path('room/<str:pk>/update', rooms.updateRoom),
     path('room/<str:pk>/delete', rooms.deleteRoom),
     path('contests/create', contests.createContest),
-    path('get-contest', contests.getContest),
 ]

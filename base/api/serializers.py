@@ -3,55 +3,87 @@ from rest_framework.serializers import ModelSerializer, CharField, Serializer
 from base.models import Room, User, Problem, Topic, Submission, Contest, RatingChange, Leetcode, Codechef, Codeforces, Message
 
 
-class BasicUserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'  # Or specify the fields you want to include
-        extra_kwargs = {
-            'password': {'write_only': True},  # Ensure password is write-only
-        }
-
-    def update(self, instance, validated_data):
-        if 'password' in validated_data:
-            instance.set_password(validated_data.pop('password'))  # Set password securely
-        return super().update(instance, validated_data)
 class LeetcodeSerializer(ModelSerializer):
     class Meta:
         model = Leetcode
-        fields = '__all__'
+        exclude = ['id']
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 class CodechefSerializer(ModelSerializer):
     class Meta:
         model = Codechef
-        fields = '__all__'
+        exclude = ['id']
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 
 
 class CodeforcesSerializer(ModelSerializer):
     class Meta:
         model = Codeforces
-        fields = '__all__'
+        exclude = ['id']    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
 
-class UserSerializer(ModelSerializer):
-    leetcode = LeetcodeSerializer()
-    codechef = CodechefSerializer()
-    codeforces = CodeforcesSerializer()
+
+class BasicUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'  # Or specify the fields you want to include
-        extra_kwargs = {
-            'password': {'write_only': True},  # Ensure password is write-only
-        }
+        fields = "__all__"
 
     def update(self, instance, validated_data):
-        if 'password' in validated_data:
-            instance.set_password(validated_data.pop('password'))  # Set password securely
-        return super().update(instance, validated_data)
+        # Update all the specified attributes
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.is_superuser = validated_data.get('is_superuser', instance.is_superuser)
+        instance.is_staff = validated_data.get('is_staff', instance.is_staff)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.gender = validated_data.get('gender', instance.gender)
+
+        # Hash the password if provided
+        password = validated_data.get('password')
+        instance.set_password(password)
+        # Save the updated instance
+        instance.save()
+        return instance
+
+class UserSerializer(ModelSerializer):
+    leetcode = LeetcodeSerializer(many=False)
+    codechef = CodechefSerializer(many=False)
+    codeforces = CodeforcesSerializer(many=False)
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Update all the specified attributes
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.is_superuser = validated_data.get('is_superuser', instance.is_superuser)
+        instance.is_staff = validated_data.get('is_staff', instance.is_staff)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.gender = validated_data.get('gender', instance.gender)
+
+        # Hash the password if provided
+        password = validated_data.get('password')
+        instance.set_password(password)
+        # Save the updated instance
+        instance.save()
+        return instance
 
 class TopicSerializer(ModelSerializer):
     class Meta:
         model = Topic
         fields = '__all__'
 class RoomSerializer(ModelSerializer): 
-    topic = TopicSerializer()
+    topics = TopicSerializer(many=True)
     class Meta: 
         model = Room
         fields = '__all__'
@@ -84,6 +116,16 @@ class RatingChangeSerializer(ModelSerializer):
     class Meta:
         model = RatingChange
         exclude = ['created_at', 'last_edited_at']
+
+class BasicRatingChangeSerializer(ModelSerializer):
+
+    class Meta:
+        model = RatingChange
+        fields = '__all__'
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
 
 class MessageSerializer(ModelSerializer):
     class Meta:
