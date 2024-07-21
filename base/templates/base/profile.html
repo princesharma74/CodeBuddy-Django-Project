@@ -1,5 +1,5 @@
 {% extends 'main.html' %}
-{% load static %}
+
 {% block content %}
 <main class="profile-page layout layout--3">
   <div class="container">
@@ -16,70 +16,28 @@
           </div>
         </div>
         <div class="profile__info">
-          <div>
-            <h3>{{user.full_name}}</h3>
-            <p>@{{user.username}}</p>
-
-            {%if request.user == user %}
-            <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
-            {% endif %}
-          </div>
+          <h3>{{user.name}}</h3>
+          <p>@{{user.username}}</p>
+          {% if request.user == user %}
+          <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+          {% endif %}
         </div>
-
-        <div class="profile__links">
-          <a href="{{user.leetcode_url}}" target="_blank">
-            <div class="platform__card">
-                <img src="{% static 'images/leetcode.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.leetcode.rating}}</h2>
-                <p>{{user.leetcode.id}}</p>
-            </div>
-          </a>
-          <a href="{{user.codechef_url}}" target="_blank">
-            <div class="platform__card">
-                <img src="{% static 'images/codechef.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.codechef.rating}}</h2>
-                <p>{{user.codechef.id}}</p>
-            </div>
-          </a>
-          <a href="{{user.codeforces_url}}" target="_blank">
-            <div class="platform__card">
-                <img src="{% static 'images/codeforces.png' %}" alt="leetcode" style="width: 20px; height: 20px;">
-                <h2>{{user.codeforces.rating}}</h2>
-                <p>{{user.codeforces.id}}</p>
-            </div>
-          </a>
-
-        </div>
-
         <div class="profile__about">
           <h3>About</h3>
-          <p>{{user.bio}}</p>
+          <p>
+            {{user.bio}}
+          </p>
         </div>
       </div>
 
       <div class="roomList__header">
         <div>
-          <h2>Rooms Hosted</h2>
+          <h2>Study Rooms Hosted by {{user.name}}</a>
+          </h2>
         </div>
       </div>
-
       {% include 'base/feed_component.html' %}
 
-      <div class="roomList__header">
-        <div>
-          <h2>Problems Submitted</h2>
-        </div>
-      </div>
-      <table>
-        <tbody>
-          {% for submission in user.submissions.all %}
-            <tr>
-              <td><a href="{{ submission.link }}"><h3>{{ submission.problem.title }}</h3></a></td>
-              <td>{{submission.problem.platform}}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
 
     </div>
     <!-- Room List End -->
@@ -87,8 +45,6 @@
     <!-- Activities Start -->
     {% include 'base/activity_component.html' %}
     <!-- Activities End -->
-
-    <!-- Submissions End -->
   </div>
 </main>
-{%endblock content %}
+{% endblock content %}

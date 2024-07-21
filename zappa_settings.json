@@ -10,8 +10,19 @@
             "concurrent"
         ],
         "profile_name": "default",
-        "project_name": "codebuddy-djang",
-        "runtime": "python3.11",
-        "s3_bucket": "zappa-lgr9hheeh"
+        "project_name": "codebuddy",
+        "runtime": "python3.12",
+        "s3_bucket": "zappa-1rfv6xwgc",
+        "environment_variables": {
+            "SECRET_KEY":"tx%$w@14&9itu7cz!$0u#2c0wsjn67#hel604ea^*yfpeup4hm",
+            "DATABASE_ENGINE":"django.db.backends.mysql",
+            "DATABASE_NAME":"codebuddy",
+            "DATABASE_USER":"admin",
+            "DATABASE_PASSWORD":"listen74listen",
+            "DATABASE_HOST":"codebuddy-database.c72aa0om4aeu.us-east-2.rds.amazonaws.com",
+            "DATABASE_PORT":"3306",
+            "DEVELOPER_TOKEN":"fda3b62cfdbff2aaf6c75481c5886738eb2f0578",
+            "DEBUG":"True"
+        }
     }
 }

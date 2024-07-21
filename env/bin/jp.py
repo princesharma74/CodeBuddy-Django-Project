@@ -1,4 +1,4 @@
-#!/Users/princesharma74/Documents/CodeBuddy-Django-Project/env/bin/python3.11
+#!/Users/princesharma74/Documents/Web Development/StudyBud/env/bin/python
 
 import sys
 import json
