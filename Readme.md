@@ -111,4 +111,4 @@ If you have any questions, feel free to open an issue or contact me at [princesh
 
 ---
 
-*Deployed version: [Click here](https://yw0d0v4kp0.execute-api.ap-south-1.amazonaws.com/dev/) To use the API of this project. Use [this](https://1d29p3txbb.execute-api.ap-south-1.amazonaws.com/dev) link.*
+*Deployed version: [Click here](https://yw0d0v4kp0.execute-api.ap-south-1.amazonaws.com/dev/) To use the API of this project. Use [this](https://1d29p3txbb.execute-api.ap-south-1.amazonaws.com/dev/api) link.*
